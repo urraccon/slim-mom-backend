@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import logger from "./config/logger.js";
-
-dotenv.config();
+import { User } from "./models/User.js";
 
 function notFound(req, res, next) {
   res.status(404);
@@ -31,19 +29,17 @@ function validate(schema) {
   };
 }
 
-function authentication(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: "Access denied" });
-  }
-
+async function protect(req, res, next) {
   try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: "Not authorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.userId).select("-password");
     next();
   } catch (error) {
     logger.error(error);
-    res.status(401).json({ message: "Invalid token", error: error.message });
+    res.status(401).json({ message: "Invalid token" });
   }
 }
 
@@ -51,7 +47,7 @@ const middlewares = {
   notFound,
   errorHandler,
   validate,
-  authentication,
+  protect,
 };
 
 export default middlewares;

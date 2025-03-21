@@ -1,23 +1,24 @@
-import dotenv from 'dotenv';
-import User from '../models/User.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-dotenv.config();
+import { User } from "../models/User.js";
+import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/generateToken.js";
 
 export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
-    let user = await User.findOne({ email });
-    if (user) {return res.status(409).json({ message: 'Email already exists' });}
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(409).json({ message: "User already exists" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    user = new User({ name, email, password: hashedPassword });
-    await user.save();
+    const user = await User.create({ name, email, password: hashedPassword });
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res
+      .status(201)
+      .cookie("token", generateToken(user._id), { httpOnly: true })
+      .json({ message: "User registered successfully", user });
   } catch (error) {
     next(error);
   }
@@ -28,19 +29,13 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) {return res.status(401).json({ message: 'Invalid credentials' });}
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-    {return res.status(401).json({ message: 'Invalid credentials' });}
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     res
-      .cookie('token', token, { httpOnly: true })
-      .json({ message: 'Logged in successfully' });
+      .cookie("token", generateToken(user._id), { httpOnly: true })
+      .json({ message: "Logged in successfully", user });
   } catch (error) {
     next(error);
   }
@@ -48,7 +43,7 @@ export const login = async (req, res, next) => {
 
 export const logout = (req, res, next) => {
   try {
-    res.clearCookie('token').json({ message: 'Logged out successfully' });
+    res.clearCookie("token").json({ message: "Logged out successfully" });
   } catch (error) {
     next(error);
   }

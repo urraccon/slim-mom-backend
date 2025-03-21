@@ -1,6 +1,5 @@
-import jwt from "jsonwebtoken";
-import logger from "./config/logger.js";
-import { User } from "./models/User.js";
+import jwt from 'jsonwebtoken';
+import logger from './config/logger.js';
 
 function notFound(req, res, next) {
   res.status(404);
@@ -15,7 +14,7 @@ function errorHandler(err, req, res, next) {
   res.status(statusCode);
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === "production" ? "🥞" : err.stack,
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
   });
 }
 
@@ -32,14 +31,16 @@ function validate(schema) {
 async function protect(req, res, next) {
   try {
     const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+    if (!token) {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
     logger.error(error);
-    res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({ message: 'Invalid token' });
   }
 }
 

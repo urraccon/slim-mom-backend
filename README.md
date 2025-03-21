@@ -28,9 +28,10 @@ npm install
 ### 3. Set up environment variables
 
 Creat a .env file in the root directory of the project and add the following configuration:
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_ecret_secret
+
+- PORT=5000
+- MONGO_URI=your_mongodb_connection_string
+- JWT_SECRET=your_jwt_ecret_secret
 
 ## Routes
 

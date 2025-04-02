@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 export const registerSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
@@ -11,9 +11,9 @@ export const registerSchema = Joi.object({
     .pattern(/[\W_]/)
     .required()
     .messages({
-      'string.min': 'Password must be at least 8 characters long.',
-      'string.pattern.base':
-        'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.',
+      "string.min": "Password must be at least 8 characters long.",
+      "string.pattern.base":
+        "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.",
     }),
 });
 

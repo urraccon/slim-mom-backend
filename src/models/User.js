@@ -1,13 +1,25 @@
-import mongoose from 'mongoose';
-import { authDB } from '../config/db.js';
+import mongoose from "mongoose";
+import connect from "../config/db.js";
+
+let authDB;
+
+const initDB = async () => {
+  const { authDB: db } = await connect();
+  authDB = db;
+};
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    name: String,
+    email: String,
+    password: String,
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
-export const User = authDB.model('User', userSchema);
+const UserModel = async () => {
+  await initDB();
+  return authDB.model("User", userSchema);
+};
+
+export default UserModel;

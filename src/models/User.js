@@ -1,25 +1,30 @@
-import mongoose from "mongoose";
-import connect from "../config/db.js";
+import mongoose from 'mongoose';
+import initDB from '../config/db.js';
+import { productSchema } from './Product.js';
 
-let authDB;
-
-const initDB = async () => {
-  const { authDB: db } = await connect();
-  authDB = db;
-};
+const healthDataSchema = new mongoose.Schema({
+  height: Number,
+  age: Number,
+  currentWeight: Number,
+  desiredWeight: Number,
+  bloodType: Number,
+  recomendedCalories: Number,
+  restrictedFoods: [productSchema],
+});
 
 const userSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
     password: String,
+    healthData: healthDataSchema,
   },
-  { timestamps: true, versionKey: false }
+  { versionKey: false }
 );
 
 const UserModel = async () => {
-  await initDB();
-  return authDB.model("User", userSchema);
+  const { authDB } = await initDB();
+  return authDB.model('User', userSchema);
 };
 
 export default UserModel;

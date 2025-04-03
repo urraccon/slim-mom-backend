@@ -1,28 +1,36 @@
-import express from "express";
+import express from 'express';
 import {
-  addDiaryEntry,
-  deleteDiaryEntry,
-  getProducts,
-  updateDiaryEntry,
-} from "../controllers/diaryController.js";
-import middlewares from "../middlewares.js";
-import { diaryEntrySchema } from "../utils/validations/diaryValidator.js";
+  addEntry,
+  deleteEntry,
+  getEntriesByDate,
+  updateEntry,
+} from '../controllers/diaryController.js';
+import middlewares from '../middlewares.js';
+import {
+  dateSchema,
+  diaryEntrySchema,
+} from '../utils/validators/diaryValidator.js';
 
 const router = express.Router();
 
-router.get("/products", getProducts);
+router.get(
+  '/date',
+  middlewares.protect,
+  middlewares.validate(dateSchema),
+  getEntriesByDate
+);
 router.post(
-  "/",
+  '/',
   middlewares.protect,
   middlewares.validate(diaryEntrySchema),
-  addDiaryEntry
+  addEntry
 );
 router.put(
-  "/:id",
+  '/:id',
   middlewares.protect,
   middlewares.validate(diaryEntrySchema),
-  updateDiaryEntry
+  updateEntry
 );
-router.delete("/:id", middlewares.protect, deleteDiaryEntry);
+router.delete('/:id', middlewares.protect, deleteEntry);
 
 export default router;

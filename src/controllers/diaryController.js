@@ -1,70 +1,100 @@
-import DiaryEntryModel from "../models/DiaryEntry.js";
-import ProductModel from "../models/Product.js";
+import DiaryModel from '../models/Diary.js';
 
-export const getProducts = async (req, res, next) => {
+export const getEntriesByDate = async (req, res, next) => {
+  const selectedDate = req.body.date;
+  const { userId } = req.user;
+
+  const date = new Date(selectedDate);
+  const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
   try {
-    const Product = await ProductModel();
-    const products = await Product.find();
-    res.status(200).json(products);
+    const Diary = await DiaryModel();
+    const entries = await Diary.find({
+      user: userId,
+      date: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    res.json(entries);
   } catch (error) {
     next(error);
   }
 };
 
-export const addDiaryEntry = async (req, res, next) => {
-  try {
-    const { product, quantity } = req.body;
-    const DiaryEntry = await DiaryEntryModel();
-    const newDiaryEntry = new DiaryEntry({ product, quantity });
+export const addEntry = async (req, res, next) => {
+  const { product, quantity } = req.body;
+  const { userId } = req.user;
 
-    await newDiaryEntry.save();
+  try {
+    const Diary = await DiaryModel();
+    const newEntry = new Diary({ product, quantity, user: userId });
+
+    await newEntry.save();
+
     res.status(201).json({
-      message: "Diary entry added successfully!",
-      diaryEntry: newDiaryEntry,
+      message: 'Diary entry added successfully',
+      entry: newEntry,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const updateDiaryEntry = async (req, res, next) => {
+export const updateEntry = async (req, res, next) => {
+  const entryId = req.params.id;
+  const { product, quantity } = req.body;
+  const { userId } = req.user;
+
   try {
-    const diaryId = req.params.id;
-    const { product, quantity } = req.body;
+    const Diary = await DiaryModel();
+    const entry = await Diary.findById(entryId);
 
-    const DiaryEntry = await DiaryEntryModel();
-    const updatedDiaryEntry = await DiaryEntry.findByIdAndUpdate(
-      diaryId,
-      { product, quantity },
-      { new: true }
-    );
-
-    if (!updatedDiaryEntry) {
-      return res.status(404).json({ message: "Diary entry not found" });
+    if (!entry) {
+      return res.status(404).json({ message: 'Diary entry not found' });
     }
+
+    if (entry.user.toString() !== userId.toString()) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized to update this entry' });
+    }
+
+    entry.product = product;
+    entry.quantity = quantity;
+    await entry.save();
 
     res.status(200).json({
-      message: "Diary entry updated successfully!",
-      diaryEntry: updatedDiaryEntry,
+      message: 'Diary entry updated successfully',
+      entry,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const deleteDiaryEntry = async (req, res, next) => {
-  try {
-    const diaryId = req.params.id;
+export const deleteEntry = async (req, res, next) => {
+  const entryId = req.params.id;
+  const { userId } = req.user;
 
-    const DiaryEntry = await DiaryEntryModel();
-    const deletedDiaryEntry = await DiaryEntry.findByIdAndDelete(diaryId);
-    if (!deletedDiaryEntry) {
-      return res.status(404).json({ message: "Diary entry not found" });
+  try {
+    const Diary = await DiaryModel();
+    const entry = await Diary.findById(entryId);
+
+    if (!entry) {
+      return res.status(404).json({ message: 'Diary entry not found' });
     }
 
+    if (entry.user.toString() !== userId.toString()) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized to delete this entry' });
+    }
+
+    await entry.remove();
+
     res.status(204).json({
-      message: "Diary entry deleted successfully!",
-      diaryEntry: deletedDiaryEntry,
+      message: 'Diary entry deleted successfully',
+      entry: entry,
     });
   } catch (error) {
     next(error);

@@ -8,35 +8,37 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default defineConfig([{
+export default defineConfig([
+  {
     extends: compat.extends("eslint:recommended"),
     plugins: {},
 
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.node,
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
 
-        ecmaVersion: "latest",
-        sourceType: "module",
+      ecmaVersion: "latest",
+      sourceType: "module",
     },
 
     settings: {},
 
     rules: {
-        "no-console": "warn",
-        "no-unused-vars": "warn",
-        semi: ["error", "always"],
-        quotes: ["error", "single"],
-        indent: ["error", 2],
-        "linebreak-style": ["error", "unix"],
-        curly: ["error", "all"],
-        eqeqeq: ["error", "always"],
+      "no-console": "warn",
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^__$" }],
+      semi: ["error", "always"],
+      quotes: ["error", "single"],
+      indent: ["error", 2],
+      "linebreak-style": ["error", "unix"],
+      curly: ["error", "all"],
+      eqeqeq: ["error", "always"],
     },
-}]);
+  },
+]);

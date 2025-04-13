@@ -7,7 +7,7 @@ function notFound(req, res, next) {
   next(error);
 }
 
-function errorHandler(err, _, res, __) {
+function errorHandler(err, _, res) {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   res.status(statusCode);
   res.json({
@@ -16,9 +16,19 @@ function errorHandler(err, _, res, __) {
   });
 }
 
-function validate(schema) {
+function validateBody(schema) {
   return (req, res, next) => {
     const { error } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+    next();
+  };
+}
+
+function validateQuery(schema) {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.query);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -45,7 +55,8 @@ async function protect(req, res, next) {
 const middlewares = {
   notFound,
   errorHandler,
-  validate,
+  validateBody,
+  validateQuery,
   protect,
 };
 

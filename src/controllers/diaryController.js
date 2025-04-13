@@ -1,10 +1,9 @@
 import DiaryModel from '../models/Diary.js';
 
 export const getEntriesByDate = async (req, res, next) => {
-  const selectedDate = req.body.date;
   const { userId } = req.user;
 
-  const date = new Date(selectedDate);
+  const date = new Date(req.query.date);
   const startOfDay = new Date(date.setHours(0, 0, 0, 0));
   const endOfDay = new Date(date.setHours(23, 59, 59, 999));
 
@@ -22,12 +21,12 @@ export const getEntriesByDate = async (req, res, next) => {
 };
 
 export const addEntry = async (req, res, next) => {
-  const { product, quantity } = req.body;
+  const { product, quantity, date } = req.body;
   const { userId } = req.user;
 
   try {
     const Diary = await DiaryModel();
-    const newEntry = new Diary({ product, quantity, user: userId });
+    const newEntry = new Diary({ product, quantity, date, user: userId });
 
     await newEntry.save();
 
@@ -90,7 +89,7 @@ export const deleteEntry = async (req, res, next) => {
         .json({ message: 'Unauthorized to delete this entry' });
     }
 
-    await entry.remove();
+    await entry.deleteOne();
 
     res.status(204).json({
       message: 'Diary entry deleted successfully',

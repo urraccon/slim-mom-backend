@@ -15,6 +15,7 @@ export const saveHealthData = async (req, res, next) => {
   try {
     const restrictedFoods = await getRestrictedFoods(bloodType);
     const User = await UserModel();
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
@@ -56,6 +57,11 @@ export const calculateHealthData = async (req, res, next) => {
     res.status(200).json({
       message: 'Health data calculated successfully',
       healthData: {
+        height,
+        age,
+        currentWeight,
+        desiredWeight,
+        bloodType,
         recommendedCalories,
         restrictedFoods,
       },

@@ -6,7 +6,7 @@ const DiarySchema = new mongoose.Schema(
   {
     product: productSchema,
     quantity: Number,
-    date: { type: Date, default: Date.now },
+    date: Date,
     user: mongoose.Schema.Types.ObjectId,
   },
   { versionKey: false }

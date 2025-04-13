@@ -3,7 +3,7 @@ import joiObjectid from 'joi-objectid';
 
 const joiObjectidValidator = joiObjectid(Joi);
 
-export const diaryEntrySchema = Joi.object({
+export const entrySchema = Joi.object({
   product: Joi.object({
     _id: joiObjectidValidator().required().messages({
       'any.required': 'Product ID is required',
@@ -46,6 +46,10 @@ export const diaryEntrySchema = Joi.object({
     'number.min': 'Quantity must be at least 1',
     'number.max': 'Quantity must be less tahn or equal to 10,000',
     'any.required': 'Quantity is required',
+  }),
+  date: Joi.date().iso().required().messages({
+    'date.base': 'Date must be a valid ISO date fromat',
+    'any.required': 'Date is required',
   }),
 });
 

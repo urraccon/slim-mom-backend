@@ -8,7 +8,7 @@ const healthDataSchema = new mongoose.Schema({
   currentWeight: Number,
   desiredWeight: Number,
   bloodType: Number,
-  recomendedCalories: Number,
+  recommendedCalories: Number,
   restrictedFoods: [productSchema],
 });
 

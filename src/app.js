@@ -9,6 +9,7 @@ dotenv.config();
 
 import middlewares from './middlewares.js';
 import api from './api/index.js';
+import { swaggerSpec, swaggerUI } from './config/swagger.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', api);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);

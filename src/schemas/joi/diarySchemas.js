@@ -1,17 +1,17 @@
 import Joi from 'joi';
-import joiObjectid from 'joi-objectid';
-
-const joiObjectidValidator = joiObjectid(Joi);
 
 export const entrySchema = Joi.object({
   product: Joi.object({
-    _id: joiObjectidValidator().required().messages({
-      'any.required': 'Product ID is required',
-      'objectid.invalid': 'Invalid product ID format',
-    }),
+    _id: Joi.string()
+      .pattern(/^[0-9a-fA-F]{24}$/)
+      .required()
+      .messages({
+        'any.required': 'Product ID is required',
+        'string.pattern.base': 'Invalid product ID format',
+      }),
     categories: Joi.string().min(2).max(50).required().messages({
       'string.min': 'Category name must be at least 2 characters long',
-      'strinf.max': 'Category name must be less than 50 characters',
+      'string.max': 'Category name must be less than 50 characters',
       'any.required': 'Product category is required',
     }),
     weight: Joi.number().min(1).max(10000).required().messages({
@@ -32,9 +32,11 @@ export const entrySchema = Joi.object({
     }),
     groupBloodNotAllowed: Joi.array()
       .items(Joi.boolean().allow(null))
+      .length(5)
       .required()
       .messages({
         'array.base': 'Group blood not allowed must be an array',
+        'array.length': 'Group blood not allowed must have exactly 5 elements',
         'any.required': 'Group blood not allowed is required',
       }),
   })

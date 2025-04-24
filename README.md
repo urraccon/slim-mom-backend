@@ -67,15 +67,15 @@ Creat a .env file in the root directory of the project and add the following con
 ## File Structure
 
 - /src: Main source directory for all server-side code and logic
-- /api: Defines API route handlers and organizes endpoints by resource or feature
-- /config: Contains configuration files such as database connections, environment setups and logger setup
-- /controllers: Handle the core logic for each route by managing requests, responses and calling services or database operations
-- /models: Defines MongoDB schemas and models using Mongoose to represent collections in the database
-- /schemas:Contains Joi schemas for validating request data to ensure it meets expected formats and constraints
-- /utils: Includes general-purpose utility functions like calculators, token generators or file handlers
-- /middlewares.js: Contains custom middlewares such as authentication, error handling or request validation
-- /app.js: Initializes the Express app, applies middlewares, sets up routing and Swagger documentation
-- /server.js: Entry point that starts the server, sets the listening port and applies environment configuration
+- /src/api: Defines API route handlers and organizes endpoints by resource or feature
+- /src/config: Contains configuration files such as database connections, environment setups and logger setup
+- /src/controllers: Handle the core logic for each route by managing requests, responses and calling services or database operations
+- /src/models: Defines MongoDB schemas and models using Mongoose to represent collections in the database
+- /src/schemas:Contains Joi schemas for validating request data to ensure it meets expected formats and constraints
+- /src/utils: Includes general-purpose utility functions like calculators, token generators or file handlers
+- /src/app.js: Initializes the Express app, applies middlewares, sets up routing and Swagger documentation
+- /src/middlewares.js: Contains custom middlewares such as authentication, error handling or request validation
+- /src/server.js: Entry point that starts the server, sets the listening port and applies environment configuration
 
 ## Scripts
 

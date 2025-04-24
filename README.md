@@ -1,4 +1,4 @@
-# Slim Mom Backend
+# SlimMom API
 
 ## Overview
 

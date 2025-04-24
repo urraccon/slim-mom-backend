@@ -2,10 +2,11 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  import('dotenv').then((dotenv) => dotenv.config());
+}
 
 import middlewares from './middlewares.js';
 import api from './api/index.js';
@@ -15,7 +16,12 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 

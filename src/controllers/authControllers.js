@@ -15,7 +15,11 @@ export const register = async (req, res, next) => {
     const user = await User.create({ name, email, password: hashedPassword });
     res
       .status(201)
-      .cookie('token', generateToken(user._id), { httpOnly: true })
+      .cookie('token', generateToken(user._id), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      })
       .json({ message: 'User registered successfully', user });
   } catch (error) {
     next(error);
@@ -32,7 +36,11 @@ export const login = async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
     res
-      .cookie('token', generateToken(user._id), { httpOnly: true })
+      .cookie('token', generateToken(user._id), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      })
       .json({ message: 'Logged in successfully', user });
   } catch (error) {
     next(error);

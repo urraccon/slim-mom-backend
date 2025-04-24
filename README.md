@@ -37,39 +37,52 @@ Creat a .env file in the root directory of the project and add the following con
 
 ### Authentication
 
-- POST /api/auth/register: Register a new user.
-- POST /api/auth/login: Log in an existing user.
-- POST /api/auth/logout - Log out the current user.
+- POST /api/auth/register: Creates a new user account based on the provided email and password
+- POST /api/auth/login: Authenticates the user and sets the JWT token in an HttpPnly cookie
+- POST /api/auth/logout: Removes the JWT token from the cookie to log out the user
 
 ### Diary
 
-These routes required a valid JWT token for access.
+- GET /api/diary: Returns all entries for the current user on a given date
+- POST /api/diary: Creates a new diary entry for the authenticated user, using the provided product, quantity and date
+- PATCH /api/diary/{id}: Allows an authenticated user to update a specific diary entry by its ID
+- DELETE /api/diary/{id}: Allows an authenticated user to delete a specific diary entry by its ID
+
+### Health
+
+- POST /api/health/save: Saves user health data and returns the updated user object including recommended calories and restricted foods
+- POST /api/health/calculator: Returns recommended daily calories and restricted foods list based on health information
+
+### Product
+
+- GET /api/product: Returns all available products, including information on calories and blood groups
 
 ## Technologies Used
 
-- Node.js: JavaScript runtime for server-side development.
-- Express: Framework for building web applications.
-- MongoDB: NoSQL database to store data.
-- JWT (JSON Web Token): Authentication for securing APIs.
+- Node.js: JavaScript runtime for server-side development
+- Express: Framework for building web applications
+- MongoDB: NoSQL database to store data
+- JWT (JSON Web Token): Authentication for securing APIs
 
 ## File Structure
 
-- /node_modules: Packages installed by npm
-- /src
-- /controllers: Handle incoming requests and logic
-- /models: Define MongoDB schemas
-- /api: Define API routes
-- /middlewares.js: Middlewares like authentication and validation
-- /config: Configuration files (e.g. database connection)
-- /utils: Utility functions and helpers
-- /app.js: Main entry point of the application
+- /src: Main source directory for all server-side code and logic
+- /api: Defines API route handlers and organizes endpoints by resource or feature
+- /config: Contains configuration files such as database connections, environment setups and logger setup
+- /controllers: Handle the core logic for each route by managing requests, responses and calling services or database operations
+- /models: Defines MongoDB schemas and models using Mongoose to represent collections in the database
+- /schemas:Contains Joi schemas for validating request data to ensure it meets expected formats and constraints
+- /utils: Includes general-purpose utility functions like calculators, token generators or file handlers
+- /middlewares.js: Contains custom middlewares such as authentication, error handling or request validation
+- /app.js: Initializes the Express app, applies middlewares, sets up routing and Swagger documentation
+- /server.js: Entry point that starts the server, sets the listening port and applies environment configuration
 
 ## Scripts
 
 - npm start: Starts the server in production mode
-- npm run dev: Starts the server in development mode with hot reloading.
-- npm test: Runs tests.
-- npm run lint: Lints the codebase for style and errors.
+- npm run dev: Starts the server in development mode with hot reloading
+- npm test: Runs tests
+- npm run lint: Lints the codebase for style and errors
 
 ## License
 
